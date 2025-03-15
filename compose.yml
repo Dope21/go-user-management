@@ -8,6 +8,8 @@ services:
     volumes:
       - ./:/app
     restart: unless-stopped
+    depends_on:
+      - db
 
   db:
     image: postgres:latest

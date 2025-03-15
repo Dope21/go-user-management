@@ -5,10 +5,19 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"user-management/db"
 	"user-management/handlers"
 )
 
 func main() {
+
+	database, err := db.ConnectDB()
+	if err != nil {
+		log.Fatal("Database connection error:", err)
+	}
+
+	defer database.Close()
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /readyz", func(w http.ResponseWriter, r *http.Request) {
