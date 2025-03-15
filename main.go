@@ -16,6 +16,8 @@ func main() {
 		log.Fatal("Database connection error:", err)
 	}
 
+	db.RunMigrations(database)
+
 	defer database.Close()
 
 	mux := http.NewServeMux()
