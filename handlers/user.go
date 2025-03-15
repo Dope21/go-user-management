@@ -3,8 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 	"user-management/models"
 	"user-management/utils"
+
+	"github.com/google/uuid"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -26,9 +29,17 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if user.Role == "" {
+		user.Role = models.RoleUser
+	}
+
 	user.Password = hashedPassword
+	user.ID = uuid.New()
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+	user.IsActive = true
 
 	w.Header().Set("Content-Type", "application/json")
 	ecoder := json.NewEncoder(w)
-	ecoder.Encode(hashedPassword)
+	ecoder.Encode(&user)
 }
