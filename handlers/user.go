@@ -46,7 +46,11 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := repository.GetAllUser()
+	queryParams := r.URL.Query()
+	startRow := utils.ParseIntQueryParam(queryParams, "start")
+	endRow := utils.ParseIntQueryParam(queryParams, "end")
+
+	users, err := repository.GetAllUser(startRow, endRow)
 	if err != nil {
 		http.Error(w, "Error query users", http.StatusInternalServerError)
 		return

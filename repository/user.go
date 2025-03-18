@@ -16,10 +16,16 @@ func InsertUser(user models.User) error {
 	return err
 }			
 
-func GetAllUser() ([]models.User, error) {
+func GetAllUser(startRow, endRow *int) ([]models.User, error) {
 	query := `SELECT id, created_at, updated_at, is_active, email, role FROM users`
-	rows, err := db.Query(query)
 
+	var args []any
+	if startRow != nil && endRow != nil {
+		query += ` LIMIT $1 OFFSET $2`
+		args = append(args, *endRow-*startRow+1, *startRow)
+	}
+
+	rows, err := db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
