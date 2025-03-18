@@ -9,6 +9,7 @@ import (
 	"user-management/utils"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -53,16 +54,18 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
-	userIDStr := r.URL.Query().Get("user_id")
+	vars := mux.Vars(r)
+	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, "Invalid user_id", http.StatusBadRequest)
+		http.Error(w, "Invalid user id", http.StatusBadRequest)
 		return
 	}
 
 	user, err := repository.GetUserByID(userID)
 	if err != nil {
-		http.Error(w, "Can't find user", http.StatusNotFound)
+		http.Error(w, "Error finding user", http.StatusInternalServerError)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
