@@ -7,6 +7,8 @@ import (
 	"user-management/models"
 	"user-management/repository"
 	"user-management/utils"
+
+	"github.com/google/uuid"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -52,4 +54,23 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
+}
+
+func GetUserByID(w http.ResponseWriter, r *http.Request) {
+	utils.ValidateRequestMethod(w, r, http.MethodGet)
+
+	userIDStr := r.URL.Query().Get("user_id")
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		http.Error(w, "Invalid user_id", http.StatusBadRequest)
+		return
+	}
+
+	user, err := repository.GetUserByID(userID)
+	if err != nil {
+		http.Error(w, "Can't find user", http.StatusNotFound)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }
