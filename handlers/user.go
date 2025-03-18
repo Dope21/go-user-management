@@ -10,10 +10,7 @@ import (
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
+	utils.ValidateRequestMethod(w, r, http.MethodPost)
 
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -41,10 +38,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
+	utils.ValidateRequestMethod(w, r, http.MethodGet)
 
 	queryParams := r.URL.Query()
 	startRow := utils.ParseIntQueryParam(queryParams, "start")
