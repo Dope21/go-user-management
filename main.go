@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"user-management/configs"
 	"user-management/db"
 	"user-management/handlers"
 )
 
 func main() {
+
+	cfg := configs.LoadConfig()
 
 	database, err := db.ConnectDB()
 	if err != nil {
@@ -31,10 +34,10 @@ func main() {
 	mux.HandleFunc("POST /users/register", handlers.RegisterUser)
 
 	server := &http.Server{
-		Addr: ":8080",
+		Addr: fmt.Sprintf(":%s", cfg.AppPort),
 		Handler: mux,
 	}
 
-	fmt.Println("Server running on port 8080")
+	fmt.Println("Server running on port " + cfg.AppPort)
 	log.Fatal(server.ListenAndServe())
 }
