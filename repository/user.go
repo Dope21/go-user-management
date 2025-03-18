@@ -15,3 +15,31 @@ func InsertUser(user models.User) error {
 
 	return err
 }			
+
+func GetAllUser() ([]models.User, error) {
+	query := `SELECT id, created_at, updated_at, is_active, email, role FROM users`
+	rows, err := db.Query(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var users []models.User
+
+	for rows.Next() {
+		var user models.User
+		err := rows.Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt, &user.IsActive, &user.Email, &user.Role)
+		if err != nil {
+			return users, err
+		}
+		users = append(users, user)
+	}
+
+	if err = rows.Err(); err != nil {
+		return users, err
+	}
+
+	return users, nil
+}
