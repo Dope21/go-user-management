@@ -1,33 +1,16 @@
-package db
+package repository
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"sort"
-	"user-management/configs"
 
 	_ "github.com/lib/pq"
 )
 
-func ConnectDB() (*sql.DB, error) {
-	cfg := configs.LoadConfig()
-	db, err := sql.Open("postgres", cfg.DBURL)
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}
-
-func RunMigrations(db *sql.DB) {
+func RunMigrations() {
 	migrationsDir := "db/migrations"
 
 	files, err := os.ReadDir(migrationsDir)

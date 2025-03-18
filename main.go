@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"user-management/configs"
-	"user-management/db"
+	"user-management/repository"
 	"user-management/routes"
 )
 
@@ -13,14 +13,14 @@ func main() {
 
 	cfg := configs.LoadConfig()
 
-	database, err := db.ConnectDB()
+	db, err := repository.ConnectDB()
 	if err != nil {
 		log.Fatal("Database connection error:", err)
 	}
 
-	db.RunMigrations(database)
+	repository.RunMigrations()
 
-	defer database.Close()
+	defer db.Close()
 
 	mux := routes.Router()
 

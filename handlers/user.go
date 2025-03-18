@@ -2,12 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"time"
 	"user-management/models"
+	"user-management/repository"
 	"user-management/utils"
-
-	"github.com/google/uuid"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -29,17 +28,14 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.Role == "" {
-		user.Role = models.RoleUser
+	user.Password = hashedPassword
+
+	err = repository.InsertUser(user)
+	if err != nil {
+		http.Error(w, "Error creating user", http.StatusInternalServerError)
+		return
 	}
 
-	user.Password = hashedPassword
-	user.ID = uuid.New()
-	user.CreatedAt = time.Now()
-	user.UpdatedAt = time.Now()
-	user.IsActive = true
-
-	w.Header().Set("Content-Type", "application/json")
-	ecoder := json.NewEncoder(w)
-	ecoder.Encode(&user)
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "User registered successfully")
 }
