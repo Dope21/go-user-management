@@ -3,9 +3,11 @@ package routes
 import (
 	"net/http"
 	"user-management/handlers"
+
+	"github.com/gorilla/mux"
 )
 
-func UserRouter(mux *http.ServeMux) {
-	mux.HandleFunc("GET /user", handlers.GetAllUser)
-	mux.HandleFunc("POST /user/register", handlers.RegisterUser)
+func UserRouter(r *mux.Router) {
+	r.HandleFunc("/user", handlers.GetAllUser).Methods(http.MethodGet)
+	r.HandleFunc("/user/register", handlers.RegisterUser).Methods(http.MethodPost)
 }

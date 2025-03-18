@@ -1,12 +1,14 @@
 package routes
 
-import "net/http"
+import (
+	"github.com/gorilla/mux"
+)
 
-func Router() *http.ServeMux {
-	mux := http.NewServeMux()
+func Router() *mux.Router {
+	r := mux.NewRouter()
 
-	HealthCheckRouter(mux)
-	UserRouter(mux)
+	HealthCheckRouter(r)
+	UserRouter(r)
 
-	return mux
+	return r
 }

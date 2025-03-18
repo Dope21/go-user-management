@@ -22,11 +22,11 @@ func main() {
 
 	defer db.Close()
 
-	mux := routes.Router()
+	r := routes.Router()
 
 	server := &http.Server{
 		Addr: fmt.Sprintf(":%s", cfg.AppPort),
-		Handler: mux,
+		Handler: r,
 	}
 
 	fmt.Println("Server running on port " + cfg.AppPort)

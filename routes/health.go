@@ -3,13 +3,15 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-func HealthCheckRouter(mux *http.ServeMux) {
+func HealthCheckRouter(r *mux.Router) {
 
-	mux.HandleFunc("GET /readyz", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/readyz", func(w http.ResponseWriter, r *http.Request) {
 		response := map[string]string { "status": "ready!" }
 		json.NewEncoder(w).Encode(response)
-	})
+	}).Methods(http.MethodGet)
 
 }

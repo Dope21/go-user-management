@@ -12,8 +12,6 @@ import (
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
-	utils.ValidateRequestMethod(w, r, http.MethodPost)
-
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -40,8 +38,6 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
-	utils.ValidateRequestMethod(w, r, http.MethodGet)
-
 	queryParams := r.URL.Query()
 	startRow := utils.ParseIntQueryParam(queryParams, "start")
 	endRow := utils.ParseIntQueryParam(queryParams, "end")
@@ -57,8 +53,6 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
-	utils.ValidateRequestMethod(w, r, http.MethodGet)
-
 	userIDStr := r.URL.Query().Get("user_id")
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
