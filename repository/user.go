@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+	"strings"
 	"user-management/models"
 
 	"github.com/google/uuid"
@@ -61,4 +63,62 @@ func GetUserByID(id uuid.UUID) (*models.User, error) {
 	}
 
 	return &user, nil
+}
+
+func UpdateUserByID(user models.UpdateUser) (*models.User, error) {
+	query := `UPDATE users SET `
+	args := []any{}
+	argTrack := 1
+	setClauses := []string{}
+
+	if user.IsActive != nil {
+		setClauses = append(setClauses, fmt.Sprintf("username = $%d", argTrack))
+		args = append(args, *user.IsActive)
+		argTrack++
+	}
+
+	if user.Email != nil {
+		setClauses = append(setClauses, fmt.Sprintf("email = $%d", argTrack))
+		args = append(args, *user.Email)
+		argTrack++
+	}
+
+	if user.Password != nil {
+		setClauses = append(setClauses, fmt.Sprintf("password = $%d", argTrack))
+		args = append(args, *user.Password)
+		argTrack++
+	}
+
+	if user.Role != nil {
+		setClauses = append(setClauses, fmt.Sprintf("role = $%d", argTrack))
+		args = append(args, *user.Role)
+		argTrack++
+	}
+
+	if len(setClauses) == 0 {
+		return nil, fmt.Errorf("no fields to update")
+	}
+
+	query += strings.Join(setClauses, ", ")
+	query += fmt.Sprintf(" WHERE id = $%d RETURNING *", argTrack)
+	args = append(args, user.ID)
+
+	row := db.QueryRow(query, args...)
+
+	var updatedUser models.User
+	err := row.Scan(
+		&updatedUser.ID, 
+		&updatedUser.CreatedAt, 
+		&updatedUser.UpdatedAt,
+		&updatedUser.IsActive, 
+		&updatedUser.Email, 
+		&updatedUser.Password,
+		&updatedUser.Role,  
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedUser, nil
 }
