@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"user-management/configs"
+	"user-management/constants/configs"
 	"user-management/repository"
 	"user-management/routes"
 )

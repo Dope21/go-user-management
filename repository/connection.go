@@ -2,7 +2,7 @@ package repository
 
 import (
 	"database/sql"
-	"user-management/configs"
+	"user-management/constants/configs"
 
 	_ "github.com/lib/pq"
 )
