@@ -12,7 +12,7 @@ services:
       - db
 
   db:
-    image: postgres:latest
+    image: postgres:17.4
     ports:
     - "${DB_PORT}:5432"
     environment:
