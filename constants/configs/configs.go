@@ -10,14 +10,15 @@ import (
 )
 
 type Configs struct {
-	AppEnv  string
-	AppPort string
-	DBHost 	string
-	DBPort 	string
-	DBUser 	string
-	DBPass 	string
-	DBName 	string
-	DBURL	 	string
+	AppEnv  		string
+	AppPort 		string
+	AppTokenKey string
+	DBHost 			string
+	DBPort 			string
+	DBUser 			string
+	DBPass 			string
+	DBName 			string
+	DBURL	 			string
 }
 
 var cfg *Configs
@@ -33,6 +34,7 @@ func LoadConfig() *Configs {
 		cfg = &Configs{
 			AppEnv: getEnv("APP_ENV", "develop"),
 			AppPort: getEnv("APP_PORT", "8080"),
+			AppTokenKey: getEnv("APP_TOKEN_KEY", ""),
 			DBHost: getEnv("DB_HOST", "db"),
 			DBPort: getEnv("DB_PORT", "5432"),
 			DBUser: getEnv("DB_USER", "username"),
