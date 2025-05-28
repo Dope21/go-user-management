@@ -30,7 +30,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	accessToken, refreshToken, err := utils.GenerateTokens(user.ID)
 	if err != nil {
-		http.Error(w, "Somethin went wrong.", http.StatusInternalServerError)
+		http.Error(w, "Sorry, something went wrong.", http.StatusInternalServerError)
 		return
 	}
 
