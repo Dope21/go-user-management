@@ -141,3 +141,16 @@ func DeleteUserByID(id uuid.UUID) error {
 
 	return nil
 }
+
+func GetUserByEmail(email string) (*models.User, error) {
+	query := "SELECT * FROM users WHERE email = $1"
+	row := db.QueryRow(query, email)
+
+	var user models.User
+	err := row.Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt, &user.IsActive, &user.Email, &user.Password, &user.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}

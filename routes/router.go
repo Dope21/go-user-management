@@ -8,6 +8,7 @@ func Router() *mux.Router {
 	r := mux.NewRouter()
 
 	HealthCheckRouter(r)
+	AuthRouter(r)
 	UserRouter(r)
 
 	return r
