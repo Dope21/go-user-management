@@ -8,6 +8,8 @@ import (
 	"user-management/utils"
 )
 
+var ONE_WEEK_IN_MINS = 7 * 24 * 60 * 60
+
 func Login(w http.ResponseWriter, r *http.Request) {
 
 	var login models.Login
@@ -34,11 +36,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokens := models.JWTTokens{
-		AccessToken: &accessToken,
-		RefreshToken: &refreshToken,
+	http.SetCookie(w, &http.Cookie{
+		Name: "refresh_token",
+		Value: refreshToken,
+		HttpOnly: true,
+		Secure: true,
+		SameSite: http.SameSiteStrictMode,
+		Path: "/",
+		MaxAge: ONE_WEEK_IN_MINS,
+	})
+
+	token := models.JWTTokens{
+		AccessToken: accessToken,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(tokens)
+	json.NewEncoder(w).Encode(token)
 }
