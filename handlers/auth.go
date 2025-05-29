@@ -16,24 +16,24 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var login models.Login
 	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
-		http.Error(w, "Invalid JSON body", http.StatusBadRequest)
+		http.Error(w, "invalid JSON body", http.StatusBadRequest)
 		return
 	}
 
 	user, err := repository.GetUserByEmail(login.Email)
 	if err != nil {
-		http.Error(w, "Error login user. Wrong email or password", http.StatusUnauthorized)
+		http.Error(w, "wrong email or password", http.StatusUnauthorized)
 		return
 	}
 
 	if !utils.ComparePassword(login.Password, user.Password) {
-		http.Error(w, "Error login user. Wrong email or password", http.StatusUnauthorized)
+		http.Error(w, "wrong email or password", http.StatusUnauthorized)
 		return
 	}
 
 	accessToken, refreshToken, err := utils.GenerateTokens(user.ID)
 	if err != nil {
-		http.Error(w, "Sorry, something went wrong.", http.StatusInternalServerError)
+		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 		return
 	}
 
@@ -62,7 +62,7 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 			case errors.Is(err, http.ErrNoCookie):
 				http.Error(w, "cookie not found", http.StatusBadRequest)
 			default:
-				http.Error(w, "server error", http.StatusInternalServerError)
+				http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 			}
 			return
     }
@@ -80,7 +80,7 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 
 	accessToken, refreshToken, err := utils.GenerateTokens(userID)
 	if err != nil {
-		http.Error(w, "Sorry, something went wrong.", http.StatusInternalServerError)
+		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 		return
 	}
 

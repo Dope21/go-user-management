@@ -17,13 +17,13 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, "Invalid JSON body", http.StatusBadRequest)
+		http.Error(w, "invalid JSON body", http.StatusBadRequest)
 		return
 	}
 
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
-		http.Error(w, "Error hashing password", http.StatusInternalServerError)
+		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 		return
 	}
 
@@ -31,12 +31,12 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	err = repository.InsertUser(user)
 	if err != nil {
-		http.Error(w, "Error creating user", http.StatusInternalServerError)
+		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, "User registered successfully")
+	fmt.Fprintln(w, "user registered successfully")
 }
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,7 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 
 	users, err := repository.GetAllUser(startRow, endRow)
 	if err != nil {
-		http.Error(w, "Error query users", http.StatusInternalServerError)
+		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 		return
 	}
 
@@ -59,13 +59,13 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, "Invalid user id", http.StatusBadRequest)
+		http.Error(w, "invalid user id", http.StatusBadRequest)
 		return
 	}
 
 	user, err := repository.GetUserByID(userID)
 	if err != nil {
-		http.Error(w, "Error finding user", http.StatusInternalServerError)
+		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 		return
 	}
 
@@ -78,7 +78,7 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, "Invalid user id", http.StatusBadRequest)
+		http.Error(w, "invalid user id", http.StatusBadRequest)
 		return
 	}
 
@@ -87,14 +87,14 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, "Invalid JSON body", http.StatusBadRequest)
+		http.Error(w, "invalid JSON body", http.StatusBadRequest)
 		return
 	}
 
 	if user.Password != nil {
 		hashedPassword, err := utils.HashPassword(*user.Password)
 		if err != nil {
-			http.Error(w, "Error hashing password", http.StatusInternalServerError)
+			http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 			return
 		}
 		user.Password = &hashedPassword
@@ -102,12 +102,12 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 
 	_, err = repository.UpdateUserByID(user)
 	if err != nil {
-		http.Error(w, "Error updating user", http.StatusInternalServerError)
+		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "User update successfully")
+	fmt.Fprintln(w, "user update successfully")
 }
 
 func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
@@ -115,17 +115,17 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, "Invalid user id", http.StatusBadRequest)
+		http.Error(w, "invalid user id", http.StatusBadRequest)
 		return
 	}
 
 	err = repository.DeleteUserByID(userID)
 	if err != nil {
 		log.Printf("error %v", err)
-		http.Error(w, "Error deleting user", http.StatusInternalServerError)
+		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "User delete successfully")
+	fmt.Fprintln(w, "user delete successfully")
 }
