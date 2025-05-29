@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	msg "user-management/constants/messages"
 	"user-management/models"
 	"user-management/repository"
 	"user-management/utils"
@@ -17,13 +18,13 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, "invalid JSON body", http.StatusBadRequest)
+		http.Error(w, msg.ErrMsgInvalidJSON, http.StatusBadRequest)
 		return
 	}
 
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 		return
 	}
 
@@ -31,7 +32,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	err = repository.InsertUser(user)
 	if err != nil {
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 		return
 	}
 
@@ -46,7 +47,7 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 
 	users, err := repository.GetAllUser(startRow, endRow)
 	if err != nil {
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 		return
 	}
 
@@ -59,13 +60,13 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, "invalid user id", http.StatusBadRequest)
+		http.Error(w, msg.ErrMsgInvalidUserID, http.StatusBadRequest)
 		return
 	}
 
 	user, err := repository.GetUserByID(userID)
 	if err != nil {
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 		return
 	}
 
@@ -78,7 +79,7 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, "invalid user id", http.StatusBadRequest)
+		http.Error(w, msg.ErrMsgInvalidUserID, http.StatusBadRequest)
 		return
 	}
 
@@ -87,14 +88,14 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, "invalid JSON body", http.StatusBadRequest)
+		http.Error(w, msg.ErrMsgInvalidJSON, http.StatusBadRequest)
 		return
 	}
 
 	if user.Password != nil {
 		hashedPassword, err := utils.HashPassword(*user.Password)
 		if err != nil {
-			http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+			http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 			return
 		}
 		user.Password = &hashedPassword
@@ -102,7 +103,7 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 
 	_, err = repository.UpdateUserByID(user)
 	if err != nil {
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 		return
 	}
 
@@ -115,14 +116,14 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, "invalid user id", http.StatusBadRequest)
+		http.Error(w, msg.ErrMsgInvalidUserID, http.StatusBadRequest)
 		return
 	}
 
 	err = repository.DeleteUserByID(userID)
 	if err != nil {
 		log.Printf("error %v", err)
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 		return
 	}
 

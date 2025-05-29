@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	msg "user-management/constants/messages"
 	"user-management/models"
 	"user-management/repository"
 	"user-management/utils"
@@ -16,24 +17,24 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var login models.Login
 	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
-		http.Error(w, "invalid JSON body", http.StatusBadRequest)
+		http.Error(w, msg.ErrMsgInvalidJSON, http.StatusBadRequest)
 		return
 	}
 
 	user, err := repository.GetUserByEmail(login.Email)
 	if err != nil {
-		http.Error(w, "wrong email or password", http.StatusUnauthorized)
+		http.Error(w, msg.ErrMsgLogin, http.StatusUnauthorized)
 		return
 	}
 
 	if !utils.ComparePassword(login.Password, user.Password) {
-		http.Error(w, "wrong email or password", http.StatusUnauthorized)
+		http.Error(w, msg.ErrMsgLogin, http.StatusUnauthorized)
 		return
 	}
 
 	accessToken, refreshToken, err := utils.GenerateTokens(user.ID)
 	if err != nil {
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 		return
 	}
 
@@ -60,9 +61,9 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
     if err != nil {
 			switch {
 			case errors.Is(err, http.ErrNoCookie):
-				http.Error(w, "cookie not found", http.StatusBadRequest)
+				http.Error(w, msg.ErrMsgNoCookie, http.StatusBadRequest)
 			default:
-				http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+				http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 			}
 			return
     }
@@ -74,13 +75,13 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err = repository.GetUserByID(userID); err != nil {
-		http.Error(w, "user not found", http.StatusBadRequest)
+		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 		return
 	}
 
 	accessToken, refreshToken, err := utils.GenerateTokens(userID)
 	if err != nil {
-		http.Error(w, "sorry, something went wrong", http.StatusInternalServerError)
+		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
 		return
 	}
 
