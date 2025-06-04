@@ -52,7 +52,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		AccessToken: accessToken,
 	}
 
-	utils.SuccessResponse(w, http.StatusOK, "login successfully", token)
+	utils.SuccessResponse(w, http.StatusOK, msg.SuccessLogin, token)
 }
 
 func Refresh(w http.ResponseWriter, r *http.Request) {
@@ -98,5 +98,5 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 		AccessToken: accessToken,
 	}
 
-	utils.SuccessResponse(w, http.StatusOK, "refreshed successfully", token)
+	utils.SuccessResponse(w, http.StatusOK, msg.SuccessLogin, token)
 }

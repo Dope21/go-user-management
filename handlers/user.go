@@ -34,7 +34,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.SuccessResponse(w, http.StatusCreated, "created successfully", nil)
+	utils.SuccessResponse(w, http.StatusCreated, msg.SuccessCreated, nil)
 }
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +48,7 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.SuccessResponse(w, http.StatusOK, "fetched successfully", users)
+	utils.SuccessResponse(w, http.StatusOK, msg.SuccessFetched, users)
 }
 
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +66,7 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.SuccessResponse(w, http.StatusOK, "fetched successfully", user)
+	utils.SuccessResponse(w, http.StatusOK, msg.SuccessFetched, user)
 }
 
 func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
@@ -102,7 +102,7 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.SuccessResponse(w, http.StatusOK, "updated successfully", nil)
+	utils.SuccessResponse(w, http.StatusOK, msg.SuccessUpdated, nil)
 }
 
 func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
@@ -121,5 +121,5 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	utils.SuccessResponse(w, http.StatusOK, "deleted successfully", nil)
+	utils.SuccessResponse(w, http.StatusOK, msg.SuccessDeleted, nil)
 }
