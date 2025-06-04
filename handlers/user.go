@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	msg "user-management/constants/messages"
 	"user-management/models"
@@ -18,13 +16,13 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInvalidJSON, http.StatusBadRequest)
+		utils.InvalidJSON(w)
 		return
 	}
 
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+		utils.InternalServerError(w)
 		return
 	}
 
@@ -32,12 +30,11 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	err = repository.InsertUser(user)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+		utils.InternalServerError(w)
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintln(w, "user registered successfully")
+	utils.SuccessResponse(w, http.StatusCreated, "created successfully", nil)
 }
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
@@ -47,12 +44,11 @@ func GetAllUser(w http.ResponseWriter, r *http.Request) {
 
 	users, err := repository.GetAllUser(startRow, endRow)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+		utils.InternalServerError(w)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
+	utils.SuccessResponse(w, http.StatusOK, "fetched successfully", users)
 }
 
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
@@ -60,18 +56,17 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInvalidUserID, http.StatusBadRequest)
+		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrMsgInvalidUserID, nil)
 		return
 	}
 
 	user, err := repository.GetUserByID(userID)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+		utils.InternalServerError(w)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	utils.SuccessResponse(w, http.StatusOK, "fetched successfully", user)
 }
 
 func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +74,7 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInvalidUserID, http.StatusBadRequest)
+		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrMsgInvalidUserID, nil)
 		return
 	}
 
@@ -88,14 +83,14 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInvalidJSON, http.StatusBadRequest)
+		utils.InvalidJSON(w)
 		return
 	}
 
 	if user.Password != nil {
 		hashedPassword, err := utils.HashPassword(*user.Password)
 		if err != nil {
-			http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+			utils.InternalServerError(w)
 			return
 		}
 		user.Password = &hashedPassword
@@ -103,12 +98,11 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 
 	_, err = repository.UpdateUserByID(user)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+		utils.InternalServerError(w)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "user update successfully")
+	utils.SuccessResponse(w, http.StatusOK, "updated successfully", nil)
 }
 
 func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
@@ -116,17 +110,16 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInvalidUserID, http.StatusBadRequest)
+		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrMsgInvalidUserID, nil)
 		return
 	}
 
 	err = repository.DeleteUserByID(userID)
 	if err != nil {
-		log.Printf("error %v", err)
-		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+		utils.InternalServerError(w)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "user delete successfully")
+	utils.SuccessResponse(w, http.StatusOK, "deleted successfully", nil)
 }

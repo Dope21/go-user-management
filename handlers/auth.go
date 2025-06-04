@@ -17,24 +17,24 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var login models.Login
 	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInvalidJSON, http.StatusBadRequest)
+		utils.InvalidJSON(w)
 		return
 	}
 
 	user, err := repository.GetUserByEmail(login.Email)
 	if err != nil {
-		http.Error(w, msg.ErrMsgLogin, http.StatusUnauthorized)
+		utils.ErrorResponse(w, http.StatusUnauthorized, msg.ErrMsgLogin, nil)
 		return
 	}
 
 	if !utils.ComparePassword(login.Password, user.Password) {
-		http.Error(w, msg.ErrMsgLogin, http.StatusUnauthorized)
+		utils.ErrorResponse(w, http.StatusUnauthorized, msg.ErrMsgLogin, nil)
 		return
 	}
 
 	accessToken, refreshToken, err := utils.GenerateTokens(user.ID)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+		utils.InternalServerError(w)
 		return
 	}
 
@@ -52,8 +52,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		AccessToken: accessToken,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(token)
+	utils.SuccessResponse(w, http.StatusOK, "login successfully", token)
 }
 
 func Refresh(w http.ResponseWriter, r *http.Request) {
@@ -61,27 +60,27 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
     if err != nil {
 			switch {
 			case errors.Is(err, http.ErrNoCookie):
-				http.Error(w, msg.ErrMsgNoCookie, http.StatusBadRequest)
+				utils.InvalidToken(w)
 			default:
-				http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+				utils.InternalServerError(w)
 			}
 			return
     }
 	
 	userID, err := utils.VerifyToken(cookie.Value)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		utils.InvalidToken(w)
 		return
 	}
 
 	if _, err = repository.GetUserByID(userID); err != nil {
-		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+		utils.InternalServerError(w)
 		return
 	}
 
 	accessToken, refreshToken, err := utils.GenerateTokens(userID)
 	if err != nil {
-		http.Error(w, msg.ErrMsgInternalServer, http.StatusInternalServerError)
+		utils.InternalServerError(w)
 		return
 	}
 
@@ -99,6 +98,5 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 		AccessToken: accessToken,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(token)
+	utils.SuccessResponse(w, http.StatusOK, "refreshed successfully", token)
 }

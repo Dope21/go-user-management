@@ -7,4 +7,5 @@ const (
 	ErrMsgInvalidUserID  = "invalid user id"
 	ErrMsgLogin          = "wrong email or password"
 	ErrMsgNoCookie       = "cookie not found"
+	ErrMsgInvalidToken   = "invalid token"
 )
