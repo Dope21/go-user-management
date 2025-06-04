@@ -1,11 +1,11 @@
 package messages
 
 const (
-	ErrMsgInternalServer = "sorry, something went wrong"
-	ErrMsgInvalidJSON    = "invalid JSON body"
-	ErrMsgInvalidMethod  = "invalid request method"
-	ErrMsgInvalidUserID  = "invalid user id"
-	ErrMsgLogin          = "wrong email or password"
-	ErrMsgNoCookie       = "cookie not found"
-	ErrMsgInvalidToken   = "invalid token"
+	ErrInternalServer = "sorry, something went wrong"
+	ErrInvalidJSON    = "invalid JSON body"
+	ErrInvalidMethod  = "invalid request method"
+	ErrInvalidUserID  = "invalid user id"
+	ErrLogin          = "wrong email or password"
+	ErrNoCookie       = "cookie not found"
+	ErrInvalidToken   = "invalid token"
 )

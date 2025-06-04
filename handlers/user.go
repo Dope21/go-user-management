@@ -56,7 +56,7 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrMsgInvalidUserID, nil)
+		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrInvalidUserID, nil)
 		return
 	}
 
@@ -74,7 +74,7 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrMsgInvalidUserID, nil)
+		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrInvalidUserID, nil)
 		return
 	}
 
@@ -110,7 +110,7 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrMsgInvalidUserID, nil)
+		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrInvalidUserID, nil)
 		return
 	}
 

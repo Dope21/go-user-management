@@ -23,12 +23,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	user, err := repository.GetUserByEmail(login.Email)
 	if err != nil {
-		utils.ErrorResponse(w, http.StatusUnauthorized, msg.ErrMsgLogin, nil)
+		utils.ErrorResponse(w, http.StatusUnauthorized, msg.ErrLogin, nil)
 		return
 	}
 
 	if !utils.ComparePassword(login.Password, user.Password) {
-		utils.ErrorResponse(w, http.StatusUnauthorized, msg.ErrMsgLogin, nil)
+		utils.ErrorResponse(w, http.StatusUnauthorized, msg.ErrLogin, nil)
 		return
 	}
 

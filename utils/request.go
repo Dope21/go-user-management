@@ -7,6 +7,6 @@ import (
 
 func ValidateRequestMethod(w http.ResponseWriter, r *http.Request, method string) {
 	if r.Method != method {
-		http.Error(w, msg.ErrMsgInvalidMethod, http.StatusMethodNotAllowed)
+		http.Error(w, msg.ErrInvalidMethod, http.StatusMethodNotAllowed)
 	}
 }

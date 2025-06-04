@@ -9,7 +9,7 @@ import (
 
 func InvalidJSON(w http.ResponseWriter) {
 	statusCode := http.StatusBadRequest
-	res := models.NewHTTPResponse(false, statusCode, msg.ErrMsgInvalidJSON, nil)
+	res := models.NewHTTPResponse(false, statusCode, msg.ErrInvalidJSON, nil)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(res)
@@ -17,7 +17,7 @@ func InvalidJSON(w http.ResponseWriter) {
 
 func InvalidToken(w http.ResponseWriter) {
 	statusCode := http.StatusUnauthorized
-	res := models.NewHTTPResponse(false, statusCode, msg.ErrMsgInvalidToken, nil)
+	res := models.NewHTTPResponse(false, statusCode, msg.ErrInvalidToken, nil)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(res)
@@ -25,7 +25,7 @@ func InvalidToken(w http.ResponseWriter) {
 
 func InternalServerError(w http.ResponseWriter) {
 	statusCode := http.StatusInternalServerError
-	res := models.NewHTTPResponse(false, statusCode, msg.ErrMsgInternalServer, nil)
+	res := models.NewHTTPResponse(false, statusCode, msg.ErrInternalServer, nil)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(res)
