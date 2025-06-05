@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 	msg "user-management/constants/messages"
 	"user-management/models"
 	"user-management/repository"
@@ -11,6 +12,7 @@ import (
 )
 
 var ONE_WEEK_IN_MINS = 7 * 24 * 60 * 60
+var TOKEN_PREFIX = "Bearer "
 
 func Login(w http.ResponseWriter, r *http.Request) {
 
@@ -110,4 +112,30 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 
 	utils.LogInfo(r, msg.SuccessLogin)
 	utils.SuccessResponse(w, http.StatusOK, msg.SuccessLogin, token)
+}
+
+func VerifyToken(w http.ResponseWriter, r *http.Request) {
+	authHeader := r.Header.Get("Authorization")
+	token := strings.TrimPrefix(authHeader, TOKEN_PREFIX)
+
+	if authHeader == "" || token == authHeader {
+		utils.InvalidToken(w)
+		return
+	}
+
+	userID, err := utils.VerifyToken(token)
+	if err != nil {
+		utils.LogError(r, err)
+		utils.InvalidToken(w)
+		return
+	}
+
+	if _, err = repository.GetUserByID(userID); err != nil {
+		utils.LogError(r, err)
+		utils.InternalServerError(w)
+		return
+	}
+
+	utils.LogInfo(r, msg.SuccessGeneral)
+	utils.SuccessResponse(w, http.StatusOK, msg.SuccessGeneral, nil)
 }
