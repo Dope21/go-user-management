@@ -60,6 +60,11 @@ func GetUserByID(id uuid.UUID) (*models.User, error) {
 	
 	var user models.User
 	err := row.Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt, &user.IsActive, &user.Email, &user.Role)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+
 	if err != nil {
 		return nil, err
 	}

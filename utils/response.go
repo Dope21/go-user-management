@@ -39,6 +39,14 @@ func Forbidden(w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(res)
 }
 
+func NotFound(w http.ResponseWriter) {
+	statusCode := http.StatusNotFound
+	res := models.NewHTTPResponse(false, statusCode, msg.ErrNotFound, nil)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(res)
+}
+
 func InternalServerError(w http.ResponseWriter) {
 	statusCode := http.StatusInternalServerError
 	res := models.NewHTTPResponse(false, statusCode, msg.ErrInternalServer, nil)

@@ -87,6 +87,12 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if user == nil {
+		utils.LogError(r, msg.ErrNotFound)
+		utils.NotFound(w)
+		return
+	}
+
 	utils.LogInfo(r, msg.SuccessFetched)
 	utils.SuccessResponse(w, http.StatusOK, msg.SuccessFetched, user)
 }
