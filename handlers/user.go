@@ -30,6 +30,19 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	user.Password = hashedPassword
 
+	result, err := repository.GetUserByEmail(user.Email)
+	if err != nil {
+		utils.LogError(r, err.Error())
+		utils.InternalServerError(w)
+		return
+	}
+
+	if result != nil {
+		utils.LogError(r, msg.ErrDuplicateEmail)
+		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrDuplicateEmail, nil)
+		return
+	}
+
 	err = repository.InsertUser(user)
 	if err != nil {
 		utils.LogError(r, err.Error())

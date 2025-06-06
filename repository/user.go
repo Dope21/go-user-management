@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 	"user-management/models"
@@ -148,6 +150,11 @@ func GetUserByEmail(email string) (*models.User, error) {
 
 	var user models.User
 	err := row.Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt, &user.IsActive, &user.Email, &user.Password, &user.Role)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+
 	if err != nil {
 		return nil, err
 	}

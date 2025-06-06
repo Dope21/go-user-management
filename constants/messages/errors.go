@@ -10,4 +10,5 @@ const (
 	ErrInvalidToken   = "invalid token"
 	ErrNoToken        = "authorization is required"
 	ErrForbidden      = "access denied"
+	ErrDuplicateEmail = "this email already been used"
 )
