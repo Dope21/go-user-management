@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 
-func LogError(r *http.Request, err error) {
-	log.Printf("| ERROR | %s | %s", r.URL.String(), err.Error())
+func LogError(r *http.Request, message string) {
+	log.Printf("| ERROR | %s | %s", r.URL.String(), message)
 }
 
 func LogInfo(r *http.Request, message string) {

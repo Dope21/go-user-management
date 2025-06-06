@@ -3,6 +3,7 @@ package utils
 import (
 	"net/http"
 	"strings"
+	msg "user-management/constants/messages"
 	"user-management/models"
 	"user-management/repository"
 )
@@ -22,19 +23,20 @@ func AuthenMiddleware(next http.Handler) http.Handler {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 
 		if authHeader == "" || token == authHeader {
+			LogError(r, msg.ErrNoToken)
 			NoToken(w)
 			return
 		}
 
 		userID, err := VerifyToken(token)
 		if err != nil {
-			LogError(r, err)
+			LogError(r, err.Error())
 			InvalidToken(w)
 			return
 		}
 
 		if _, err = repository.GetUserByID(userID); err != nil {
-			LogError(r, err)
+			LogError(r, err.Error())
 			InternalServerError(w)
 			return
 		}
@@ -50,25 +52,27 @@ func AuthenAdminMiddleware(next http.Handler) http.Handler {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 
 		if authHeader == "" || token == authHeader {
+			LogError(r, msg.ErrNoToken)
 			NoToken(w)
 			return
 		}
 
 		userID, err := VerifyToken(token)
 		if err != nil {
-			LogError(r, err)
+			LogError(r, err.Error())
 			InvalidToken(w)
 			return
 		}
 
 		user, err := repository.GetUserByID(userID)
 		if err != nil {
-			LogError(r, err)
+			LogError(r, err.Error())
 			InternalServerError(w)
 			return
 		}
 
 		if user.Role != models.RoleAdmin {
+			LogError(r, msg.ErrForbidden)
 			Forbidden(w)
 			return
 		}
