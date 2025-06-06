@@ -3,14 +3,17 @@ package routes
 import (
 	"net/http"
 	"user-management/handlers"
+	"user-management/utils"
 
 	"github.com/gorilla/mux"
 )
 
 func UserRouter(r *mux.Router) {
-	r.HandleFunc("/users", handlers.GetAllUser).Methods(http.MethodGet)
-	r.HandleFunc("/users/register", handlers.RegisterUser).Methods(http.MethodPost)
-	r.HandleFunc("/users/{user_id}", handlers.UpdateUserByID).Methods(http.MethodPatch)
-	r.HandleFunc("/users/{user_id}", handlers.GetUserByID).Methods(http.MethodGet)
-	r.HandleFunc("/users/{user_id}", handlers.DeleteUserByID).Methods(http.MethodDelete)
+	userR := r.PathPrefix("/users").Subrouter()
+	userR.HandleFunc("", handlers.GetAllUser).Methods(http.MethodGet)
+	userR.HandleFunc("", handlers.RegisterUser).Methods(http.MethodPost)
+	userR.HandleFunc("/{user_id}", handlers.UpdateUserByID).Methods(http.MethodPatch)
+	userR.HandleFunc("/{user_id}", handlers.GetUserByID).Methods(http.MethodGet)
+	userR.HandleFunc("/{user_id}", handlers.DeleteUserByID).Methods(http.MethodDelete)
+	userR.Use(utils.AuthenAdminMiddleware)
 }

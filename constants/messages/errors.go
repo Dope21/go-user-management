@@ -8,4 +8,6 @@ const (
 	ErrLogin          = "wrong email or password"
 	ErrNoCookie       = "cookie not found"
 	ErrInvalidToken   = "invalid token"
+	ErrNoToken        = "authorization is required"
+	ErrForbidden      = "access denied"
 )

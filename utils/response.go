@@ -23,6 +23,22 @@ func InvalidToken(w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(res)
 }
 
+func NoToken(w http.ResponseWriter) {
+	statusCode := http.StatusUnauthorized
+	res := models.NewHTTPResponse(false, statusCode, msg.ErrNoToken, nil)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(res)
+}
+
+func Forbidden(w http.ResponseWriter) {
+	statusCode := http.StatusForbidden
+	res := models.NewHTTPResponse(false, statusCode, msg.ErrForbidden, nil)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(res)
+}
+
 func InternalServerError(w http.ResponseWriter) {
 	statusCode := http.StatusInternalServerError
 	res := models.NewHTTPResponse(false, statusCode, msg.ErrInternalServer, nil)
