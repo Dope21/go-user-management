@@ -12,4 +12,5 @@ const (
 	ErrForbidden      = "access denied"
 	ErrDuplicateEmail = "this email already been used"
 	ErrNotFound       = "resource not found"
+	ErrInvalidBody    = "invalid request body"
 )

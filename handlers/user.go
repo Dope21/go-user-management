@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	msg "user-management/constants/messages"
 	"user-management/dto"
-	"user-management/models"
 	"user-management/repository"
 	"user-management/utils"
 
@@ -14,11 +14,23 @@ import (
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
-	var user models.User
-	err := json.NewDecoder(r.Body).Decode(&user)
+	user, err := utils.ParsingBody[dto.CreateUserRequest](r)
 	if err != nil {
 		utils.LogError(r, err.Error())
 		utils.InvalidJSON(w)
+		return
+	}
+
+	fieldErrors, err := utils.ValidateBody(&user)
+	if err != nil {
+		utils.LogError(r, err.Error())
+		utils.InternalServerError(w)
+		return
+	}
+
+	if fieldErrors != nil {
+		utils.LogError(r, fmt.Sprint(fieldErrors))
+		utils.InvalidBodyFields(w, fieldErrors)
 		return
 	}
 

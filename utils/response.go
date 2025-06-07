@@ -15,6 +15,14 @@ func InvalidJSON(w http.ResponseWriter) {
 	json.NewEncoder(w).Encode(res)
 }
 
+func InvalidBodyFields(w http.ResponseWriter, fieldErrors []string) {
+	statusCode := http.StatusUnprocessableEntity
+	res := dto.NewHTTPResponse(false, statusCode, msg.ErrInvalidBody, fieldErrors)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(res)
+}
+
 func InvalidToken(w http.ResponseWriter) {
 	statusCode := http.StatusUnauthorized
 	res := dto.NewHTTPResponse(false, statusCode, msg.ErrInvalidToken, nil)
