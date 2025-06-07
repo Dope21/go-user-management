@@ -12,16 +12,15 @@ func ValidateRequestMethod(w http.ResponseWriter, r *http.Request, method string
 	}
 }
 
-func ParsingBody[T any](r *http.Request) (T, error) {
+func ParsingBody[T any](r *http.Request) (*T, error) {
 	var data T
 
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&data)
 	if err != nil {
-		var zero T
-		return zero, err
+		return nil, err
 	}
 
-	return data, nil
+	return &data, nil
 }

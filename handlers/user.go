@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	msg "user-management/constants/messages"
@@ -21,7 +20,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fieldErrors, err := utils.ValidateBody(&user)
+	fieldErrors, err := utils.ValidateBody(user)
 	if err != nil {
 		utils.LogError(r, err.Error())
 		utils.InternalServerError(w)
@@ -120,13 +119,23 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user dto.UpdateUserRequest
-	user.ID = userID
-
-	err = json.NewDecoder(r.Body).Decode(&user)
+	user, err := utils.ParsingBody[dto.UpdateUserRequest](r)
 	if err != nil {
 		utils.LogError(r, err.Error())
 		utils.InvalidJSON(w)
+		return
+	}
+
+	fieldError, err := utils.ValidateBody(user)
+	if err != nil {
+		utils.LogError(r, err.Error())
+		utils.InternalServerError(w)
+		return
+	}
+
+	if fieldError != nil {
+		utils.LogError(r, fmt.Sprint(fieldError))
+		utils.InvalidBodyFields(w, fieldError)
 		return
 	}
 
@@ -139,6 +148,8 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 		}
 		user.Password = &hashedPassword
 	}
+
+	user.ID = userID
 
 	_, err = repository.UpdateUserByID(user)
 	if err != nil {

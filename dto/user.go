@@ -13,9 +13,9 @@ type CreateUserRequest struct {
 }
 
 type UpdateUserRequest struct {
-	ID       uuid.UUID 		`json:"id"`
-	IsActive *bool     		`json:"is_active"`
-	Email    *string   		`json:"email"`
-	Password *string   		`json:"password"`
-	Role     *models.Role `json:"role"`
+	ID				uuid.UUID
+	IsActive 	*bool     		`json:"is_active"`
+	Email			*string				`json:"email" validate:"email"`
+	Password 	*string 			`json:"password" validate:"min=6,max=20"`
+	Role 			*models.Role 	`json:"role"`
 }
