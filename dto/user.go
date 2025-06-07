@@ -7,9 +7,9 @@ import (
 )
 
 type UpdateUserRequest struct {
-	ID       uuid.UUID `json:"id"`
-	IsActive *bool     `json:"is_active"`
-	Email    *string   `json:"email"`
-	Password *string   `json:"password"`
-	Role     *models.Role     `json:"role"`
+	ID       uuid.UUID 		`json:"id"`
+	IsActive *bool     		`json:"is_active"`
+	Email    *string   		`json:"email"`
+	Password *string   		`json:"password"`
+	Role     *models.Role `json:"role"`
 }
