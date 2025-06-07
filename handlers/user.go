@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	msg "user-management/constants/messages"
+	"user-management/dto"
 	"user-management/models"
 	"user-management/repository"
 	"user-management/utils"
@@ -107,7 +108,7 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.UpdateUser
+	var user dto.UpdateUserRequest
 	user.ID = userID
 
 	err = json.NewDecoder(r.Body).Decode(&user)

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"user-management/dto"
 	"user-management/models"
 
 	"github.com/google/uuid"
@@ -72,7 +73,7 @@ func GetUserByID(id uuid.UUID) (*models.User, error) {
 	return &user, nil
 }
 
-func UpdateUserByID(user models.UpdateUser) (*models.User, error) {
+func UpdateUserByID(user dto.UpdateUserRequest) (*models.User, error) {
 	query := `UPDATE users SET `
 	args := []any{}
 	argTrack := 1

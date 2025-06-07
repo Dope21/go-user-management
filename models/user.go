@@ -23,11 +23,3 @@ type User struct {
 	Password 	string 	  `json:"password,omitempty"`
 	Role     	Role 	 		`json:"role"`
 }
-
-type UpdateUser struct {
-	ID			 uuid.UUID	`json:"id"`
-	IsActive *bool			`json:"is_active"`
-	Email		 *string		`json:"email"`
-	Password *string		`json:"password"`
-	Role		 *Role			`json:"role"`
-}

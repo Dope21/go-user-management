@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 	msg "user-management/constants/messages"
-	"user-management/models"
+	"user-management/dto"
 	"user-management/repository"
 	"user-management/utils"
 )
@@ -16,7 +16,7 @@ var TOKEN_PREFIX = "Bearer "
 
 func Login(w http.ResponseWriter, r *http.Request) {
 
-	var login models.Login
+	var login dto.LoginRequest
 	err := json.NewDecoder(r.Body).Decode(&login)
 	if err != nil {
 		utils.LogError(r, err.Error())
@@ -55,7 +55,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		MaxAge: ONE_WEEK_IN_MINS,
 	})
 
-	token := models.JWTTokens{
+	token := dto.TokenResponse{
 		AccessToken: accessToken,
 	}
 
@@ -106,7 +106,7 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 		MaxAge: ONE_WEEK_IN_MINS,
 	})
 
-	token := models.JWTTokens{
+	token := dto.TokenResponse{
 		AccessToken: accessToken,
 	}
 

@@ -1,10 +1,10 @@
-package models
+package dto
 
-type Login struct {
+type LoginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type JWTTokens struct {
+type TokenResponse struct {
 	AccessToken string `json:"access_token"`
 }

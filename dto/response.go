@@ -1,4 +1,4 @@
-package models
+package dto
 
 type HTTPResponse struct {
 	IsSuccess  bool   `json:"is_success"`
