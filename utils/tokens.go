@@ -28,6 +28,15 @@ func tokenSign(userID uuid.UUID, duration time.Duration, secretKey string) (stri
 	return token.SignedString([]byte(secretKey))
 }
 
+func tokenSignByEmail(email string, duration time.Duration, secretKey string) (string, error) {
+	claim := jwt.MapClaims{
+		"email": email,
+		"exp": time.Now().Add(duration).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+	return token.SignedString([]byte(secretKey))
+}
+
 func GenerateTokens(userID uuid.UUID) (string, string, error) {
 	cfg := configs.LoadConfig()
 
@@ -42,6 +51,17 @@ func GenerateTokens(userID uuid.UUID) (string, string, error) {
 	}
 
 	return accessToken, refreshToken, nil
+}
+
+func GenerateConfirmEmailToken(email string) (string, error) {
+	cfg := configs.LoadConfig()
+
+	token, err := tokenSignByEmail(email, 30*time.Minute, cfg.AppTokenKey)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 func VerifyToken(tokenStr string) (uuid.UUID, error) {
