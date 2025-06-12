@@ -13,6 +13,8 @@ type Configs struct {
 	AppEnv  		string
 	AppPort 		string
 	AppTokenKey string
+	AppHost 		string
+	AppURL 			string
 	DBHost 			string
 	DBPort 			string
 	DBUser 			string
@@ -39,6 +41,8 @@ func LoadConfig() *Configs {
 			AppEnv: getEnv("APP_ENV", "develop"),
 			AppPort: getEnv("APP_PORT", "8080"),
 			AppTokenKey: getEnv("APP_TOKEN_KEY", ""),
+			AppHost: getEnv("APP_HOST", "localhost"),
+			AppURL: getEnv("APP_URL", "http://localhost:8080"),
 			DBHost: getEnv("DB_HOST", "db"),
 			DBPort: getEnv("DB_PORT", "5432"),
 			DBUser: getEnv("DB_USER", "username"),

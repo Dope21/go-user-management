@@ -21,7 +21,7 @@ func SendEmailConfirmation(sendTo string) error {
 		return err
 	}
 
-  body := fmt.Sprintf(msg.EmailLink, token)
+  body := fmt.Sprintf(msg.EmailLink, cfg.AppURL, token)
   message := fmt.Sprintf(msg.EmailHeader, sendTo, msg.EmailTitle, body)
 
 	auth := smtp.PlainAuth("", cfg.MailUser, cfg.MailPass, cfg.MailHost)
