@@ -19,6 +19,10 @@ type Configs struct {
 	DBPass 			string
 	DBName 			string
 	DBURL	 			string
+	MailUser		string
+	MailPass		string
+	MailPort		string
+	MailHost		string
 }
 
 var cfg *Configs
@@ -40,6 +44,10 @@ func LoadConfig() *Configs {
 			DBUser: getEnv("DB_USER", "username"),
 			DBPass: getEnv("DB_PASS", "password"),
 			DBName: getEnv("DB_NAME", "user_management"),
+			MailUser: getEnv("MAIL_USER", "user@mail.com"),
+			MailPass: getEnv("MAIL_PASS", "password"),
+			MailPort: getEnv("MAIL_PORT", "587"),
+			MailHost: getEnv("MAIL_HOST", "smtp.gmail.com"),
 		}
 
 		cfg.DBURL = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", cfg.DBUser, cfg.DBPass, cfg.DBHost, cfg.DBPort, cfg.DBName)
