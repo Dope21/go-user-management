@@ -62,6 +62,13 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	go func() {
+    err := utils.SendEmailConfirmation(user.Email)
+    if err != nil {
+			utils.LogError(r, fmt.Sprintf(msg.ErrCantSendEmail, user.Email, err))
+    }
+	}()
+
 	utils.LogInfo(r, msg.SuccessCreated)
 	utils.SuccessResponse(w, http.StatusCreated, msg.SuccessCreated, nil)
 }
