@@ -13,4 +13,5 @@ const (
 	ErrDuplicateEmail = "this email already been used"
 	ErrNotFound       = "resource not found"
 	ErrInvalidBody    = "invalid request body"
+	ErrCantSendEmail  = "failed to send confirmation email to %s: %v"
 )
