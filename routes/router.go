@@ -10,6 +10,7 @@ func Router() *mux.Router {
 	HealthCheckRouter(r)
 	AuthRouter(r)
 	UserRouter(r)
+	EmailRouter(r)
 
 	return r
 }
