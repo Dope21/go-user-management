@@ -80,7 +80,7 @@ func UpdateUserByID(user *dto.UpdateUserRequest) (*models.User, error) {
 	setClauses := []string{}
 
 	if user.IsActive != nil {
-		setClauses = append(setClauses, fmt.Sprintf("username = $%d", argTrack))
+		setClauses = append(setClauses, fmt.Sprintf("is_active = $%d", argTrack))
 		args = append(args, *user.IsActive)
 		argTrack++
 	}
