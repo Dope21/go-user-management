@@ -55,7 +55,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repository.InsertUser(user)
+	newUser, err := repository.InsertUser(user)
 	if err != nil {
 		utils.LogError(r, err.Error())
 		utils.InternalServerError(w)
@@ -63,7 +63,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	go func() {
-    err := utils.SendEmailConfirmation(user.Email)
+    err := utils.SendEmailConfirmation(&newUser)
     if err != nil {
 			utils.LogError(r, fmt.Sprintf(msg.ErrCantSendEmail, user.Email, err))
     }

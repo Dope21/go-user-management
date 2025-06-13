@@ -11,14 +11,29 @@ import (
 	"github.com/google/uuid"
 )
 
-func InsertUser(user *dto.CreateUserRequest) error {
+func InsertUser(user *dto.CreateUserRequest) (models.User, error) {
 	query := `
 		INSERT INTO users (id, created_at, updated_at, is_active, email, password, role) 
 		VALUES ($1, NOW(), NOW(), $2, $3, $4, $5)
+		RETURNING *
 	`
-	_, err := db.Exec(query, uuid.New(), false, user.Email, user.Password, user.Role)
+	row := db.QueryRow(query, uuid.New(), false, user.Email, user.Password, user.Role)
 
-	return err
+	var newUser models.User
+	err := row.Scan(
+		&newUser.ID, 
+		&newUser.CreatedAt, 
+		&newUser.UpdatedAt,
+		&newUser.IsActive, 
+		&newUser.Email, 
+		&newUser.Password,
+		&newUser.Role,  
+	)
+	if err != nil {
+		return newUser, err
+	}
+
+	return newUser, nil
 }			
 
 func GetAllUser(startRow, endRow *int) ([]models.User, error) {
