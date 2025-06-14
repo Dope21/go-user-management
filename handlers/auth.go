@@ -31,6 +31,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if user == nil {
+		utils.LogError(r, msg.ErrNotFound)
+		utils.ErrorResponse(w, http.StatusUnauthorized, msg.ErrLogin, nil)
+		return
+	}
+
 	err = utils.ComparePassword(login.Password, user.Password)
 	if err != nil {
 		utils.LogError(r, err.Error())
