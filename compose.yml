@@ -1,15 +1,23 @@
 services:
   user-management:
     build:
+      target: ${APP_ENV}
       context: .
       dockerfile: Dockerfile
     ports:
       - 8080:8080
-    volumes:
-      - ./:/app
     restart: unless-stopped
     depends_on:
       - db
+    profiles:
+      - prod
+
+  user-management-dev:
+    extends: user-management
+    profiles:
+      - dev
+    volumes:
+      - ./:/app
 
   db:
     image: postgres:17.4
