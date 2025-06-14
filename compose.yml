@@ -9,8 +9,6 @@ services:
     restart: unless-stopped
     depends_on:
       - db
-    profiles:
-      - prod
 
   user-management-dev:
     extends: user-management
