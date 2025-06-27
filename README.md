@@ -45,12 +45,12 @@ MAIL_PORT=587
 1. APP_ENV=dev
 2. Run with `docker compose`
 ```sh
-docker compose --profile dev up --build
+docker compose up dev db --build
 ```
 
 #### Production (Docker Compose)
 1. APP_ENV=prod
 2. Run with `docker compose`
 ```sh
-docker compose up --build
+docker compose up prod db --build
 ```

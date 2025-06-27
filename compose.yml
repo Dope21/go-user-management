@@ -1,5 +1,5 @@
 services:
-  user-management:
+  prod:
     build:
       target: ${APP_ENV}
       context: .
@@ -10,10 +10,16 @@ services:
     depends_on:
       - db
 
-  user-management-dev:
-    extends: user-management
-    profiles:
-      - dev
+  dev:
+    build:
+      target: ${APP_ENV}
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    depends_on:
+      - db
     volumes:
       - ./:/app
 
