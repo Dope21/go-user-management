@@ -1,0 +1,7 @@
+Dockerfile
+.dockerignore
+README.md
+.git
+.DS_Store
+.vscode/
+.air.toml
