@@ -15,7 +15,7 @@ I wanted to play around with [Goroutines](https://go.dev/tour/concurrency/1), [C
 - `models`: data structures to map database relations
 - `repository`: methods to interact with database
 - `routes`: API endpoints
-- `utils`: helper functions and libraries (I was going to name it `libs` but too lazy to change it)
+- `libs`: helper functions and libraries
 - `main.go`: startup server
 
 ### ENV template

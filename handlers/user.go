@@ -5,38 +5,38 @@ import (
 	"net/http"
 	msg "user-management/constants/messages"
 	"user-management/dto"
+	"user-management/libs"
 	"user-management/repository"
-	"user-management/utils"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
-	user, err := utils.ParsingBody[dto.CreateUserRequest](r)
+	user, err := libs.ParsingBody[dto.CreateUserRequest](r)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InvalidJSON(w)
+		libs.LogError(r, err.Error())
+		libs.InvalidJSON(w)
 		return
 	}
 
-	fieldErrors, err := utils.ValidateBody(user)
+	fieldErrors, err := libs.ValidateBody(user)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InternalServerError(w)
+		libs.LogError(r, err.Error())
+		libs.InternalServerError(w)
 		return
 	}
 
 	if fieldErrors != nil {
-		utils.LogError(r, fmt.Sprint(fieldErrors))
-		utils.InvalidBodyFields(w, fieldErrors)
+		libs.LogError(r, fmt.Sprint(fieldErrors))
+		libs.InvalidBodyFields(w, fieldErrors)
 		return
 	}
 
-	hashedPassword, err := utils.HashPassword(user.Password)
+	hashedPassword, err := libs.HashPassword(user.Password)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InternalServerError(w)
+		libs.LogError(r, err.Error())
+		libs.InternalServerError(w)
 		return
 	}
 
@@ -44,49 +44,49 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	result, err := repository.GetUserByEmail(user.Email)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InternalServerError(w)
+		libs.LogError(r, err.Error())
+		libs.InternalServerError(w)
 		return
 	}
 
 	if result != nil {
-		utils.LogError(r, msg.ErrDuplicateEmail)
-		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrDuplicateEmail, nil)
+		libs.LogError(r, msg.ErrDuplicateEmail)
+		libs.ErrorResponse(w, http.StatusBadRequest, msg.ErrDuplicateEmail, nil)
 		return
 	}
 
 	newUser, err := repository.InsertUser(user)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InternalServerError(w)
+		libs.LogError(r, err.Error())
+		libs.InternalServerError(w)
 		return
 	}
 
 	go func() {
-    err := utils.SendEmailConfirmation(&newUser)
+    err := libs.SendEmailConfirmation(&newUser)
     if err != nil {
-			utils.LogError(r, fmt.Sprintf(msg.ErrCantSendEmail, user.Email, err))
+			libs.LogError(r, fmt.Sprintf(msg.ErrCantSendEmail, user.Email, err))
     }
 	}()
 
-	utils.LogInfo(r, msg.SuccessCreated)
-	utils.SuccessResponse(w, http.StatusCreated, msg.SuccessCreated, nil)
+	libs.LogInfo(r, msg.SuccessCreated)
+	libs.SuccessResponse(w, http.StatusCreated, msg.SuccessCreated, nil)
 }
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
-	startRow := utils.ParseIntQueryParam(queryParams, "start")
-	endRow := utils.ParseIntQueryParam(queryParams, "end")
+	startRow := libs.ParseIntQueryParam(queryParams, "start")
+	endRow := libs.ParseIntQueryParam(queryParams, "end")
 
 	users, err := repository.GetAllUser(startRow, endRow)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InternalServerError(w)
+		libs.LogError(r, err.Error())
+		libs.InternalServerError(w)
 		return
 	}
 
-	utils.LogInfo(r, msg.SuccessFetched)
-	utils.SuccessResponse(w, http.StatusOK, msg.SuccessFetched, users)
+	libs.LogInfo(r, msg.SuccessFetched)
+	libs.SuccessResponse(w, http.StatusOK, msg.SuccessFetched, users)
 }
 
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
@@ -94,26 +94,26 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrInvalidUserID, nil)
+		libs.LogError(r, err.Error())
+		libs.ErrorResponse(w, http.StatusBadRequest, msg.ErrInvalidUserID, nil)
 		return
 	}
 
 	user, err := repository.GetUserByID(userID)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InternalServerError(w)
+		libs.LogError(r, err.Error())
+		libs.InternalServerError(w)
 		return
 	}
 
 	if user == nil {
-		utils.LogError(r, msg.ErrNotFound)
-		utils.NotFound(w)
+		libs.LogError(r, msg.ErrNotFound)
+		libs.NotFound(w)
 		return
 	}
 
-	utils.LogInfo(r, msg.SuccessFetched)
-	utils.SuccessResponse(w, http.StatusOK, msg.SuccessFetched, user)
+	libs.LogInfo(r, msg.SuccessFetched)
+	libs.SuccessResponse(w, http.StatusOK, msg.SuccessFetched, user)
 }
 
 func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
@@ -121,36 +121,36 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrInvalidUserID, nil)
+		libs.LogError(r, err.Error())
+		libs.ErrorResponse(w, http.StatusBadRequest, msg.ErrInvalidUserID, nil)
 		return
 	}
 
-	user, err := utils.ParsingBody[dto.UpdateUserRequest](r)
+	user, err := libs.ParsingBody[dto.UpdateUserRequest](r)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InvalidJSON(w)
+		libs.LogError(r, err.Error())
+		libs.InvalidJSON(w)
 		return
 	}
 
-	fieldError, err := utils.ValidateBody(user)
+	fieldError, err := libs.ValidateBody(user)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InternalServerError(w)
+		libs.LogError(r, err.Error())
+		libs.InternalServerError(w)
 		return
 	}
 
 	if fieldError != nil {
-		utils.LogError(r, fmt.Sprint(fieldError))
-		utils.InvalidBodyFields(w, fieldError)
+		libs.LogError(r, fmt.Sprint(fieldError))
+		libs.InvalidBodyFields(w, fieldError)
 		return
 	}
 
 	if user.Password != nil {
-		hashedPassword, err := utils.HashPassword(*user.Password)
+		hashedPassword, err := libs.HashPassword(*user.Password)
 		if err != nil {
-			utils.LogError(r, err.Error())
-			utils.InternalServerError(w)
+			libs.LogError(r, err.Error())
+			libs.InternalServerError(w)
 			return
 		}
 		user.Password = &hashedPassword
@@ -160,13 +160,13 @@ func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
 
 	_, err = repository.UpdateUserByID(user)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InternalServerError(w)
+		libs.LogError(r, err.Error())
+		libs.InternalServerError(w)
 		return
 	}
 
-	utils.LogInfo(r, msg.SuccessUpdated)
-	utils.SuccessResponse(w, http.StatusOK, msg.SuccessUpdated, nil)
+	libs.LogInfo(r, msg.SuccessUpdated)
+	libs.SuccessResponse(w, http.StatusOK, msg.SuccessUpdated, nil)
 }
 
 func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
@@ -174,18 +174,18 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["user_id"]
 	userID, err := uuid.Parse(userIDStr)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.ErrorResponse(w, http.StatusBadRequest, msg.ErrInvalidUserID, nil)
+		libs.LogError(r, err.Error())
+		libs.ErrorResponse(w, http.StatusBadRequest, msg.ErrInvalidUserID, nil)
 		return
 	}
 
 	err = repository.DeleteUserByID(userID)
 	if err != nil {
-		utils.LogError(r, err.Error())
-		utils.InternalServerError(w)
+		libs.LogError(r, err.Error())
+		libs.InternalServerError(w)
 		return
 	}
 
-	utils.LogInfo(r, msg.SuccessDeleted)
-	utils.SuccessResponse(w, http.StatusOK, msg.SuccessDeleted, nil)
+	libs.LogInfo(r, msg.SuccessDeleted)
+	libs.SuccessResponse(w, http.StatusOK, msg.SuccessDeleted, nil)
 }
